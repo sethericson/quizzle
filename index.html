@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>404 — Not Found</title>
+  <title>The 1940s — A Decade That Shook the World</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎖️</text></svg>"/>
   <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -16,12 +17,13 @@
       --line: rgba(200, 169, 122, 0.15);
     }
 
-    html, body {
-      height: 100%;
+    html { scroll-behavior: smooth; }
+
+    body {
       background: var(--bg);
       color: var(--fg);
       font-family: 'DM Mono', monospace;
-      overflow: hidden;
+      min-height: 100vh;
     }
 
     /* Grain overlay */
@@ -33,16 +35,6 @@
       opacity: 0.04;
       pointer-events: none;
       z-index: 100;
-    }
-
-    /* Vignette */
-    body::after {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.7) 100%);
-      pointer-events: none;
-      z-index: 99;
     }
 
     .grid-lines {
@@ -62,76 +54,297 @@
       to { opacity: 1; }
     }
 
-    .container {
+    /* ── HERO ── */
+    .hero {
       position: relative;
       z-index: 10;
-      height: 100vh;
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 2rem;
+      padding: 6rem 2rem 8rem;
       text-align: center;
     }
 
-    .error-code {
+    .hero-eyebrow {
+      font-size: 0.65rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--accent);
+      opacity: 0;
+      animation: riseIn 0.8s ease 0.2s forwards;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-title {
       font-family: 'Instrument Serif', serif;
-      font-size: clamp(7rem, 20vw, 14rem);
-      line-height: 1;
+      font-size: clamp(5rem, 18vw, 13rem);
+      line-height: 0.9;
       color: transparent;
       -webkit-text-stroke: 1px var(--muted);
       letter-spacing: -0.03em;
       opacity: 0;
-      animation: riseIn 1s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
-      user-select: none;
+      animation: riseIn 1s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
       position: relative;
     }
 
-    .error-code::after {
-      content: '404';
+    .hero-title::after {
+      content: '1940s';
       position: absolute;
       inset: 0;
       color: var(--fg);
       -webkit-text-stroke: 0;
       clip-path: inset(0 100% 0 0);
-      animation: revealText 1.2s cubic-bezier(0.77, 0, 0.18, 1) 0.6s forwards;
+      animation: revealText 1.4s cubic-bezier(0.77, 0, 0.18, 1) 0.7s forwards;
     }
 
     @keyframes revealText {
       to { clip-path: inset(0 0% 0 0); }
     }
 
-    .divider {
+    .hero-divider {
       width: 1px;
       height: 0;
       background: linear-gradient(to bottom, transparent, var(--accent), transparent);
-      margin: 2rem auto;
-      animation: growLine 0.8s ease 1s forwards;
+      margin: 2.5rem auto;
+      animation: growLine 0.8s ease 1.2s forwards;
     }
 
     @keyframes growLine {
-      to { height: 60px; }
+      to { height: 70px; }
     }
 
-    .headline {
+    .hero-subtitle {
       font-family: 'Instrument Serif', serif;
       font-style: italic;
-      font-size: clamp(1.4rem, 3.5vw, 2.2rem);
+      font-size: clamp(1.2rem, 3vw, 2rem);
       color: var(--fg);
-      line-height: 1.3;
+      max-width: 620px;
+      line-height: 1.4;
       opacity: 0;
-      animation: riseIn 0.9s cubic-bezier(0.16, 1, 0.3, 1) 1.2s forwards;
-      max-width: 560px;
+      animation: riseIn 0.9s ease 1.5s forwards;
     }
 
-    .subline {
+    .hero-sub2 {
       margin-top: 1rem;
-      font-size: 0.72rem;
+      font-size: 0.68rem;
       letter-spacing: 0.12em;
       color: var(--muted);
       text-transform: uppercase;
       opacity: 0;
-      animation: riseIn 0.9s cubic-bezier(0.16, 1, 0.3, 1) 1.5s forwards;
+      animation: riseIn 0.9s ease 1.8s forwards;
+    }
+
+    .scroll-hint {
+      position: absolute;
+      bottom: 2.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.6rem;
+      opacity: 0;
+      animation: riseIn 1s ease 2.2s forwards;
+    }
+
+    .scroll-hint::after {
+      content: '';
+      width: 1px;
+      height: 30px;
+      background: linear-gradient(to bottom, var(--accent), transparent);
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.4; }
+      50% { opacity: 1; }
+    }
+
+    /* ── CONTENT ── */
+    .content {
+      position: relative;
+      z-index: 10;
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 2rem 8rem;
+    }
+
+    .section {
+      margin-bottom: 6rem;
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.9s ease, transform 0.9s ease;
+    }
+
+    .section.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .section-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--line);
+      max-width: 120px;
+    }
+
+    .section-title {
+      font-family: 'Instrument Serif', serif;
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      line-height: 1.1;
+      margin-bottom: 1.5rem;
+      letter-spacing: -0.02em;
+    }
+
+    .section-title em {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .section-body {
+      font-size: 0.78rem;
+      line-height: 2;
+      color: #b0a89e;
+      max-width: 680px;
+    }
+
+    .section-body p + p {
+      margin-top: 1.2em;
+    }
+
+    /* Timeline */
+    .timeline {
+      margin-top: 2.5rem;
+      border-left: 1px solid var(--line);
+      padding-left: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .tl-item {
+      position: relative;
+    }
+
+    .tl-item::before {
+      content: '';
+      position: absolute;
+      left: -2.4rem;
+      top: 0.4rem;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 10px rgba(200, 169, 122, 0.5);
+    }
+
+    .tl-year {
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 0.3rem;
+    }
+
+    .tl-event {
+      font-family: 'Instrument Serif', serif;
+      font-size: 1.1rem;
+      margin-bottom: 0.4rem;
+    }
+
+    .tl-desc {
+      font-size: 0.72rem;
+      line-height: 1.8;
+      color: #7a7068;
+    }
+
+    /* Pull quote */
+    .pull-quote {
+      margin: 3rem 0;
+      padding: 2.5rem;
+      border: 1px solid var(--line);
+      position: relative;
+      background: rgba(200, 169, 122, 0.03);
+    }
+
+    .pull-quote::before {
+      content: '"';
+      font-family: 'Instrument Serif', serif;
+      font-size: 6rem;
+      line-height: 1;
+      color: var(--accent);
+      opacity: 0.2;
+      position: absolute;
+      top: -1rem;
+      left: 1.5rem;
+    }
+
+    .pull-quote p {
+      font-family: 'Instrument Serif', serif;
+      font-style: italic;
+      font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+      line-height: 1.5;
+      color: var(--fg);
+    }
+
+    .pull-quote cite {
+      display: block;
+      margin-top: 1rem;
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      color: var(--muted);
+      text-transform: uppercase;
+      font-style: normal;
+    }
+
+    /* Stats row */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--line);
+      margin: 2.5rem 0;
+      border: 1px solid var(--line);
+    }
+
+    .stat {
+      background: var(--bg);
+      padding: 2rem 1.5rem;
+      text-align: center;
+    }
+
+    .stat-num {
+      font-family: 'Instrument Serif', serif;
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      color: var(--accent);
+      line-height: 1;
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      line-height: 1.5;
     }
 
     @keyframes riseIn {
@@ -139,19 +352,15 @@
       to   { opacity: 1; transform: translateY(0); }
     }
 
+    /* ── FOOTER ── */
     footer {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
+      position: relative;
       z-index: 20;
       padding: 1.4rem 2.5rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
       border-top: 1px solid var(--line);
-      opacity: 0;
-      animation: riseIn 0.8s ease 2s forwards;
     }
 
     .footer-meta {
@@ -167,39 +376,12 @@
       text-transform: uppercase;
       color: var(--accent);
       text-decoration: none;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      transition: gap 0.3s ease, opacity 0.3s ease;
+      cursor: default;
     }
 
-    .footer-link:hover {
-      gap: 0.9rem;
-      opacity: 0.8;
-    }
-
-    .footer-link::after {
-      content: '→';
-      display: inline-block;
-      transition: transform 0.3s ease;
-    }
-
-    .footer-link:hover::after {
-      transform: translateX(3px);
-    }
-
-    .cursor-dot {
-      display: inline-block;
-      width: 6px;
-      height: 6px;
-      background: var(--accent);
-      border-radius: 50%;
-      margin-left: 4px;
-      animation: blink 1.1s step-end infinite;
-    }
-
-    @keyframes blink {
-      50% { opacity: 0; }
+    @media (max-width: 600px) {
+      .stats { grid-template-columns: 1fr; }
+      footer { flex-direction: column; gap: 1rem; text-align: center; }
     }
   </style>
 </head>
@@ -207,17 +389,131 @@
 
   <div class="grid-lines"></div>
 
-  <div class="container">
-    <div class="error-code">404</div>
-    <div class="divider"></div>
-    <p class="headline">It doesn't seem we could locate what you're looking for<span class="cursor-dot"></span></p>
-    <p class="subline">The page may have moved, expired, or never existed</p>
+  <!-- HERO -->
+  <section class="hero">
+    <p class="hero-eyebrow">A Decade Under Fire</p>
+    <div class="hero-title">1940s</div>
+    <div class="hero-divider"></div>
+    <p class="hero-subtitle">Ten years that decided the fate of civilization — and left nothing unchanged.</p>
+    <p class="hero-sub2">World War II &nbsp;·&nbsp; The Holocaust &nbsp;·&nbsp; The Atomic Age &nbsp;·&nbsp; The Cold War's Dawn</p>
+    <div class="scroll-hint">Scroll</div>
+  </section>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- Overview -->
+    <div class="section">
+      <p class="section-label">Overview</p>
+      <h2 class="section-title">The decade the world<br><em>broke and rebuilt itself</em></h2>
+      <div class="section-body">
+        <p>No decade in modern history compressed more catastrophe, courage, and consequence into ten years than the 1940s. It opened with Nazi Germany tearing through Western Europe and closed with two superpowers staring each other down across an iron curtain — and the shadow of the bomb hanging over everything in between.</p>
+        <p>More than 70 million people died in World War II, making it the deadliest conflict in human history. Entire cities were reduced to rubble. Six million Jews were systematically murdered in the Holocaust. And yet out of that destruction emerged the United Nations, the modern civil rights movement, decolonization across Asia and Africa, and a technological revolution that would define the rest of the century.</p>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="section">
+      <div class="stats">
+        <div class="stat">
+          <div class="stat-num">70M+</div>
+          <div class="stat-label">Deaths in<br>World War II</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">6M</div>
+          <div class="stat-label">Jewish lives lost<br>in the Holocaust</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">30</div>
+          <div class="stat-label">Nations involved<br>in the conflict</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Timeline -->
+    <div class="section">
+      <p class="section-label">Key Events</p>
+      <h2 class="section-title">Year by year,<br><em>the world shifts</em></h2>
+      <div class="timeline">
+        <div class="tl-item">
+          <p class="tl-year">1940</p>
+          <p class="tl-event">The Fall of France & the Battle of Britain</p>
+          <p class="tl-desc">Germany's blitzkrieg overwhelms France in six weeks. Britain stands alone against the Luftwaffe in the skies above the English Channel — and holds.</p>
+        </div>
+        <div class="tl-item">
+          <p class="tl-year">1941</p>
+          <p class="tl-event">Pearl Harbor & America Enters the War</p>
+          <p class="tl-desc">Japan's surprise attack on December 7th pulls the United States into the conflict. Germany simultaneously invades the Soviet Union, opening the Eastern Front — the war's bloodiest theater.</p>
+        </div>
+        <div class="tl-item">
+          <p class="tl-year">1942</p>
+          <p class="tl-event">The Holocaust Escalates & Turning Points at Sea</p>
+          <p class="tl-desc">The Wannsee Conference formalizes the "Final Solution." Meanwhile, the Battle of Midway cripples Japanese naval power and shifts the Pacific War's momentum to the Allies.</p>
+        </div>
+        <div class="tl-item">
+          <p class="tl-year">1944</p>
+          <p class="tl-event">D-Day — The Normandy Landings</p>
+          <p class="tl-desc">June 6th. Over 156,000 Allied troops storm five beaches on the coast of France in the largest seaborne invasion in history, cracking open Hitler's Atlantic Wall.</p>
+        </div>
+        <div class="tl-item">
+          <p class="tl-year">1945</p>
+          <p class="tl-event">V-E Day, Hiroshima, V-J Day</p>
+          <p class="tl-desc">Germany surrenders in May. In August, atomic bombs obliterate Hiroshima and Nagasaki. Japan surrenders. World War II ends — but the atomic age and the Cold War have just begun.</p>
+        </div>
+        <div class="tl-item">
+          <p class="tl-year">1947–49</p>
+          <p class="tl-event">The Cold War Takes Shape</p>
+          <p class="tl-desc">The Marshall Plan rebuilds Western Europe. The Berlin Blockade tests Allied resolve. NATO forms. The Soviet Union tests its first atomic bomb. The world divides into two armed camps.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pull quote -->
+    <div class="section">
+      <div class="pull-quote">
+        <p>We shall fight on the beaches, we shall fight on the landing grounds, we shall fight in the fields and in the streets, we shall fight in the hills; we shall never surrender.</p>
+        <cite>— Winston Churchill, June 4, 1940</cite>
+      </div>
+    </div>
+
+    <!-- Home Front -->
+    <div class="section">
+      <p class="section-label">The Home Front</p>
+      <h2 class="section-title">War changes<br><em>everything at home</em></h2>
+      <div class="section-body">
+        <p>The 1940s didn't just reshape battlefields — they rewired society. Women entered the workforce in unprecedented numbers, symbolized by Rosie the Riveter. Rationing became a way of life in Britain and America. Entire industries converted overnight from consumer goods to wartime production.</p>
+        <p>In the United States, Japanese Americans were forcibly relocated to internment camps in one of the most shameful civil liberties violations in American history. Meanwhile, over one million Black Americans served in a segregated military — a contradiction that fueled the civil rights movement that would explode in the following decade.</p>
+        <p>By the end of the 1940s, the GI Bill was sending veterans to college and funding the suburbs. The baby boom had begun. And a generation that had survived the Depression and a World War was quietly building the most prosperous middle class the world had ever seen.</p>
+      </div>
+    </div>
+
+    <!-- Legacy -->
+    <div class="section">
+      <p class="section-label">Legacy</p>
+      <h2 class="section-title">The shadow<br><em>that never left</em></h2>
+      <div class="section-body">
+        <p>The 1940s created the architecture of the modern world. The United Nations. The Universal Declaration of Human Rights. The State of Israel. The division of Korea. The partition of India. NATO. The CIA. The World Bank. The beginning of decolonization across Africa and Asia.</p>
+        <p>And above all: the bomb. The decision to use atomic weapons against Japan in August 1945 didn't just end the war — it permanently altered the logic of geopolitics. For the first time in human history, nations possessed the capability to end civilization itself. That awareness has shaped every major conflict, every arms negotiation, and every great power relationship since.</p>
+        <p>The 1940s didn't just happen. They haunt us still.</p>
+      </div>
+    </div>
+
   </div>
 
   <footer>
-    <span class="footer-meta">Error / Page not found</span>
-    <a href="https://quizzle.ink/dashboard" class="footer-link">Find what you need</a>
+    <span class="footer-meta">History / The 1940s</span>
+    <a href="https://quizzle.ink/dashboard" class="footer-link">A Decade Under Fire</a>
   </footer>
+
+  <script>
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) e.target.classList.add('visible');
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.section').forEach(s => observer.observe(s));
+  </script>
 
 </body>
 </html>
