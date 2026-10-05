@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quizzle — System Maintenance & Brain Upgrade</title>
+
+  <!-- Custom SVG Data URI Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='qGrad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%236366F1'/><stop offset='50%' stop-color='%238B5CF6'/><stop offset='100%' stop-color='%23EC4899'/></linearGradient></defs><rect width='100' height='100' rx='28' fill='%230B0F19'/><rect width='98' height='98' x='1' y='1' rx='27' fill='none' stroke='%238B5CF6' stroke-opacity='0.35' stroke-width='1.5'/><circle cx='48' cy='46' r='20' fill='none' stroke='url(%23qGrad)' stroke-width='9'/><path d='M56 56 L72 72' stroke='url(%23qGrad)' stroke-width='9' stroke-linecap='round'/><path d='M70 24 L72.5 30 L78.5 32.5 L72.5 35 L70 41 L67.5 35 L61.5 32.5 L67.5 30 Z' fill='%23EC4899'/></svg>">
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            obsidian: '#080C14',
+            panel: 'rgba(15, 23, 42, 0.70)',
+            panelBorder: 'rgba(51, 65, 85, 0.6)',
+            neonPurple: '#A855F7',
+            neonCyan: '#06B6D4',
+            neonBlue: '#3B82F6',
+          },
+          animation: {
+            'spin-slow': 'spin 16s linear infinite',
+            'spin-reverse': 'spin-reverse 20s linear infinite',
+            'pulse-glow': 'pulseGlow 3s ease-in-out infinite',
+            'float': 'float 5s ease-in-out infinite',
+            'scanline': 'scanline 8s linear infinite',
+          },
+          keyframes: {
+            'spin-reverse': {
+              '0%': { transform: 'rotate(0deg)' },
+              '100%': { transform: 'rotate(-360deg)' },
+            },
+            pulseGlow: {
+              '0%, 100%': { opacity: '0.6', filter: 'drop-shadow(0 0 15px rgba(168,85,247,0.4))' },
+              '50%': { opacity: '1', filter: 'drop-shadow(0 0 25px rgba(6,182,212,0.7))' },
+            },
+            float: {
+              '0%, 100%': { transform: 'translateY(0px)' },
+              '50%': { transform: 'translateY(-10px)' },
+            },
+            scanline: {
+              '0%': { transform: 'translateY(-100%)' },
+              '100%': { transform: 'translateY(1000%)' }
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background-color: #080C14;
+      color: #F8FAFC;
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* Glassmorphism custom styling */
+    .glass-card {
+      background: rgba(15, 23, 42, 0.65);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    }
+
+    .glass-card-hover {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .glass-card-hover:hover {
+      border-color: rgba(168, 85, 247, 0.3);
+      box-shadow: 0 0 30px rgba(168, 85, 247, 0.15);
+      transform: translateY(-2px);
+    }
+
+    /* Terminal scrollbar */
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: rgba(15, 23, 42, 0.6);
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: rgba(51, 65, 85, 0.8);
+      border-radius: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: rgba(168, 85, 247, 0.5);
+    }
+
+    /* Gradient Background Glows */
+    .glow-purple {
+      background: radial-gradient(circle, rgba(168, 85, 247, 0.18) 0%, rgba(0,0,0,0) 70%);
+    }
+    .glow-cyan {
+      background: radial-gradient(circle, rgba(6, 182, 212, 0.15) 0%, rgba(0,0,0,0) 70%);
+    }
+
+    /* Grid background pattern */
+    .bg-grid-pattern {
+      background-size: 40px 40px;
+      background-image: 
+        linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    }
+  </style>
+</head>
+<body class="min-h-screen relative flex flex-col justify-between selection:bg-purple-500 selection:text-white">
+
+  <!-- Background Interactive Canvas -->
+  <canvas id="bg-canvas" class="fixed inset-0 pointer-events-none z-0 opacity-60"></canvas>
+
+  <!-- Ambient Glow Gradients -->
+  <div class="fixed top-[-10%] left-[-10%] w-[500px] h-[500px] glow-purple pointer-events-none z-0"></div>
+  <div class="fixed bottom-[-10%] right-[-10%] w-[600px] h-[600px] glow-cyan pointer-events-none z-0"></div>
+
+  <div class="relative z-10 bg-grid-pattern min-h-screen flex flex-col">
+    
+    <!-- Top Header Bar -->
+    <header class="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <!-- Logo Icon -->
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-purple-600 via-indigo-600 to-cyan-400 p-0.5 shadow-lg shadow-purple-500/20">
+          <div class="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center">
+            <i data-lucide="brain-circuit" class="w-6 h-6 text-cyan-400"></i>
+          </div>
+        </div>
+        <span class="text-2xl font-bold bg-gradient-to-r from-white via-slate-200 to-purple-300 bg-clip-text text-transparent tracking-tight">
+          Quizzle<span class="text-cyan-400">.ai</span>
+        </span>
+      </div>
+
+      <!-- Live Status Badge -->
+      <div class="flex items-center space-x-2 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-semibold tracking-wider uppercase backdrop-blur-md">
+        <span class="relative flex h-2 w-2">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+          <span class="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+        </span>
+        <span>Maintenance Mode</span>
+      </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 flex flex-col justify-center">
+
+      <!-- Hero Section & Animated HUD Graphic -->
+      <section class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center mb-12">
+        
+        <!-- Left Hero Text -->
+        <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
+          <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-300 text-sm font-medium">
+            <i data-lucide="sparkles" class="w-4 h-4 text-purple-400"></i>
+            <span>AI Brain Upgrade in Progress</span>
+          </div>
+
+          <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-tight">
+            Quizzle is taking a <br class="hidden sm:inline" />
+            <span class="bg-gradient-to-r from-purple-400 via-indigo-300 to-cyan-400 bg-clip-text text-transparent">
+              quick study break 🧠⚡
+            </span>
+          </h1>
+
+          <p class="text-slate-400 text-base sm:text-lg max-w-2xl mx-auto lg:mx-0 leading-relaxed">
+            Our AI model is currently optimizing its neural vectors, recalibrating flashcard algorithms, and expanding knowledge parameters to serve you better. We'll be back online shortly!
+          </p>
+
+          <!-- Quick Action Stats Row -->
+          <div class="pt-2 flex flex-wrap justify-center lg:justify-start gap-4 text-xs font-mono text-slate-400">
+            <div class="flex items-center space-x-2 px-3 py-2 rounded-lg bg-slate-900/80 border border-slate-800">
+              <i data-lucide="cpu" class="w-4 h-4 text-cyan-400"></i>
+              <span>GPU Clusters: <b>Refining</b></span>
+            </div>
+            <div class="flex items-center space-x-2 px-3 py-2 rounded-lg bg-slate-900/80 border border-slate-800">
+              <i data-lucide="shield-check" class="w-4 h-4 text-emerald-400"></i>
+              <span>User Data: <b>100% Safe</b></span>
+            </div>
+            <div class="flex items-center space-x-2 px-3 py-2 rounded-lg bg-slate-900/80 border border-slate-800">
+              <i data-lucide="clock" class="w-4 h-4 text-purple-400"></i>
+              <span>Est. Return: <b>~20 mins</b></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Visual HUD Graphic Ring -->
+        <div class="lg:col-span-5 flex justify-center items-center">
+          <div class="relative w-64 h-64 sm:w-80 sm:h-80 flex items-center justify-center animate-float">
+            
+            <!-- Dynamic HUD Rings -->
+            <div class="absolute inset-0 rounded-full border-2 border-dashed border-purple-500/30 animate-spin-slow"></div>
+            <div class="absolute inset-3 rounded-full border border-cyan-500/20 animate-spin-reverse"></div>
+            <div class="absolute inset-8 rounded-full border-2 border-purple-500/10 border-t-cyan-400 border-r-purple-500 animate-spin"></div>
+            
+            <!-- Glow background circle -->
+            <div class="absolute inset-12 rounded-full bg-gradient-to-tr from-purple-900/40 to-cyan-900/40 backdrop-blur-md border border-slate-700/50 shadow-inner flex flex-col items-center justify-center p-6 text-center">
+              
+              <!-- Center Pulse Core -->
+              <div class="relative mb-3">
+                <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-purple-500 to-cyan-400 p-0.5 animate-pulse-glow flex items-center justify-center">
+                  <div class="w-full h-full bg-slate-950 rounded-[14px] flex items-center justify-center">
+                    <i data-lucide="refresh-cw" class="w-6 h-6 text-cyan-400 animate-spin"></i>
+                  </div>
+                </div>
+              </div>
+
+              <!-- HUD Digital Metrics -->
+              <div class="text-2xl font-mono font-bold text-white tracking-wider" id="hud-percentage">94%</div>
+              <div class="text-[10px] font-mono tracking-widest text-cyan-400 uppercase mt-1">System Reboot</div>
+              <div class="text-[11px] text-slate-400 mt-2 font-mono flex items-center space-x-1">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span>PATCH v2.4.9</span>
+              </div>
+            </div>
+
+            <!-- Orbiting Decorative Nodes -->
+            <div class="absolute -top-2 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded bg-slate-900 border border-purple-500/40 text-[10px] font-mono text-purple-300 shadow-lg">
+              OPTIMIZING_VECTORS
+            </div>
+            <div class="absolute -bottom-2 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded bg-slate-900 border border-cyan-500/40 text-[10px] font-mono text-cyan-300 shadow-lg">
+              SYNCING_DB
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- Middle Grid Section: Timer & Component Health + Diagnostic Console -->
+      <section class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-12">
+        
+        <!-- Left: Countdown Timer & Component Health Status (7 cols) -->
+        <div class="lg:col-span-7 space-y-6">
+          
+          <!-- Countdown Card -->
+          <div class="glass-card rounded-2xl p-6 relative overflow-hidden">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+              <div>
+                <h2 class="text-lg font-bold text-white flex items-center space-x-2">
+                  <i data-lucide="timer" class="w-5 h-5 text-purple-400"></i>
+                  <span>Estimated Downtime Remaining</span>
+                </h2>
+                <p class="text-xs text-slate-400 mt-1">Services will automatically resume once timer hits zero.</p>
+              </div>
+              <span class="self-start sm:self-center px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/30 text-purple-300 text-xs font-mono">
+                ETA: 00:24:15
+              </span>
+            </div>
+
+            <!-- Countdown Timer Numbers Display -->
+            <div class="grid grid-cols-3 gap-3 text-center">
+              <!-- Hours -->
+              <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-3 sm:p-4">
+                <div id="cd-hours" class="text-3xl sm:text-4xl font-mono font-bold text-white tracking-wider">00</div>
+                <div class="text-[10px] sm:text-xs font-mono text-slate-400 uppercase mt-1">Hours</div>
+              </div>
+              <!-- Minutes -->
+              <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-3 sm:p-4">
+                <div id="cd-minutes" class="text-3xl sm:text-4xl font-mono font-bold text-cyan-400 tracking-wider">24</div>
+                <div class="text-[10px] sm:text-xs font-mono text-slate-400 uppercase mt-1">Minutes</div>
+              </div>
+              <!-- Seconds -->
+              <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-3 sm:p-4">
+                <div id="cd-seconds" class="text-3xl sm:text-4xl font-mono font-bold text-purple-400 tracking-wider">15</div>
+                <div class="text-[10px] sm:text-xs font-mono text-slate-400 uppercase mt-1">Seconds</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Component Status Indicators -->
+          <div class="glass-card rounded-2xl p-6">
+            <h3 class="text-base font-bold text-white mb-4 flex items-center space-x-2">
+              <i data-lucide="activity" class="w-5 h-5 text-cyan-400"></i>
+              <span>System Core Services Status</span>
+            </h3>
+
+            <div class="space-y-3">
+              <!-- Item 1: AI Query Engine -->
+              <div class="flex items-center justify-between p-3 rounded-xl bg-slate-900/50 border border-slate-800/80">
+                <div class="flex items-center space-x-3">
+                  <div class="p-2 rounded-lg bg-amber-500/10 text-amber-400">
+                    <i data-lucide="cpu" class="w-4 h-4"></i>
+                  </div>
+                  <div>
+                    <div class="text-sm font-semibold text-slate-200">AI Query Engine</div>
+                    <div class="text-xs text-slate-400">Vector index optimization</div>
+                  </div>
+                </div>
+                <span class="px-2.5 py-1 rounded-md bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-medium font-mono">
+                  Maintenance
+                </span>
+              </div>
+
+              <!-- Item 2: Flashcard Database -->
+              <div class="flex items-center justify-between p-3 rounded-xl bg-slate-900/50 border border-slate-800/80">
+                <div class="flex items-center space-x-3">
+                  <div class="p-2 rounded-lg bg-blue-500/10 text-blue-400">
+                    <i data-lucide="database" class="w-4 h-4"></i>
+                  </div>
+                  <div>
+                    <div class="text-sm font-semibold text-slate-200">Flashcard Database</div>
+                    <div class="text-xs text-slate-400">Syncing cache layers</div>
+                  </div>
+                </div>
+                <span class="px-2.5 py-1 rounded-md bg-blue-500/10 border border-blue-500/30 text-blue-400 text-xs font-medium font-mono">
+                  Syncing (88%)
+                </span>
+              </div>
+
+              <!-- Item 3: Quiz Generator -->
+              <div class="flex items-center justify-between p-3 rounded-xl bg-slate-900/50 border border-slate-800/80">
+                <div class="flex items-center space-x-3">
+                  <div class="p-2 rounded-lg bg-emerald-500/10 text-emerald-400">
+                    <i data-lucide="zap" class="w-4 h-4"></i>
+                  </div>
+                  <div>
+                    <div class="text-sm font-semibold text-slate-200">Quiz Generator Microservice</div>
+                    <div class="text-xs text-slate-400">Ready for connection</div>
+                  </div>
+                </div>
+                <span class="px-2.5 py-1 rounded-md bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-medium font-mono flex items-center space-x-1">
+                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                  <span>Online</span>
+                </span>
+              </div>
+
+              <!-- Item 4: User Auth & Saved Progress -->
+              <div class="flex items-center justify-between p-3 rounded-xl bg-slate-900/50 border border-slate-800/80">
+                <div class="flex items-center space-x-3">
+                  <div class="p-2 rounded-lg bg-purple-500/10 text-purple-400">
+                    <i data-lucide="shield" class="w-4 h-4"></i>
+                  </div>
+                  <div>
+                    <div class="text-sm font-semibold text-slate-200">User Auth & Study Logs</div>
+                    <div class="text-xs text-slate-400">Re-indexing user tokens</div>
+                  </div>
+                </div>
+                <span class="px-2.5 py-1 rounded-md bg-purple-500/10 border border-purple-500/30 text-purple-300 text-xs font-medium font-mono">
+                  Re-indexing
+                </span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Right: Diagnostic Console Terminal Feed (5 cols) -->
+        <div class="lg:col-span-5 flex flex-col">
+          <div class="glass-card rounded-2xl flex-1 flex flex-col overflow-hidden border border-slate-800">
+            
+            <!-- Terminal Header -->
+            <div class="bg-slate-950/80 px-4 py-3 border-b border-slate-800 flex items-center justify-between">
+              <div class="flex items-center space-x-2">
+                <div class="w-3 h-3 rounded-full bg-rose-500/80"></div>
+                <div class="w-3 h-3 rounded-full bg-amber-500/80"></div>
+                <div class="w-3 h-3 rounded-full bg-emerald-500/80"></div>
+                <span class="text-xs font-mono text-slate-400 ml-2">quizzle-diag-node-04</span>
+              </div>
+              <div class="flex items-center space-x-1.5 text-[10px] font-mono text-emerald-400">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                <span>LIVE FEED</span>
+              </div>
+            </div>
+
+            <!-- Terminal Body -->
+            <div id="terminal-body" class="p-4 bg-slate-950/90 font-mono text-xs text-slate-300 flex-1 overflow-y-auto max-h-[360px] custom-scrollbar space-y-2.5">
+              <div class="text-slate-500">// Diagnostic stream initialized. Auto-refreshing...</div>
+              <div class="text-purple-400">[11:40:02] INIT: Initiating system maintenance routine v2.4...</div>
+              <div class="text-slate-300">[11:41:15] DB: Backing up flashcard decks to secure cold-storage... DONE</div>
+              <div class="text-cyan-400">[11:42:01] AI_CORE: Re-training memory vectors on cluster-alpha...</div>
+              <div class="text-amber-400">[11:43:22] CACHE: Clearing stale Redis cache shards (12.4GB freed)...</div>
+              <div class="text-slate-300">[11:45:12] PATCH: Deploying v2.4 core patch to worker instances...</div>
+              <div class="text-emerald-400">[11:47:00] HEALTH: Server health checks at 94% capacity.</div>
+              <!-- Real-time logs appended here via JS -->
+            </div>
+
+            <!-- Terminal Footer Status -->
+            <div class="bg-slate-950/60 px-4 py-2 border-t border-slate-800/80 text-[11px] font-mono text-slate-400 flex items-center justify-between">
+              <span>Status: <span class="text-cyan-400">Applying Final Patch</span></span>
+              <span>Memory: 4.2GB / 16GB</span>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- Interactive Interactive AI Trivia Mini Game -->
+      <section class="mb-12">
+        <div class="glass-card rounded-2xl p-6 sm:p-8 relative overflow-hidden">
+          
+          <!-- Section Header -->
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 border-b border-slate-800/80 pb-4">
+            <div>
+              <div class="inline-flex items-center space-x-1.5 text-xs font-semibold text-cyan-400 uppercase tracking-wider mb-1">
+                <i data-lucide="gamepad-2" class="w-4 h-4"></i>
+                <span>Interactive Waiting Room</span>
+              </div>
+              <h2 class="text-xl sm:text-2xl font-bold text-white">Play While You Wait — Mini AI Trivia</h2>
+              <p class="text-xs sm:text-sm text-slate-400">Test your tech & AI knowledge while our servers reboot!</p>
+            </div>
+
+            <!-- Score Badge -->
+            <div class="flex items-center space-x-4 bg-slate-900/90 px-4 py-2 rounded-xl border border-slate-800 self-start md:self-auto">
+              <div class="text-center">
+                <div class="text-[10px] text-slate-400 uppercase font-mono">Score</div>
+                <div id="trivia-score" class="text-lg font-bold text-cyan-400 font-mono">0 / 4</div>
+              </div>
+              <div class="h-6 w-[1px] bg-slate-800"></div>
+              <div class="text-center">
+                <div class="text-[10px] text-slate-400 uppercase font-mono">Streak</div>
+                <div id="trivia-streak" class="text-lg font-bold text-purple-400 font-mono">🔥 0</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Trivia Game Box Container -->
+          <div id="trivia-container" class="max-w-3xl mx-auto space-y-6">
+            
+            <!-- Question Header & Counter -->
+            <div class="flex items-center justify-between text-xs font-mono text-slate-400">
+              <span id="trivia-q-num">Question 1 of 4</span>
+              <span id="trivia-category" class="text-purple-400">Category: Machine Learning</span>
+            </div>
+
+            <!-- Question Text -->
+            <h3 id="trivia-question" class="text-lg sm:text-xl font-semibold text-white leading-relaxed">
+              Loading question...
+            </h3>
+
+            <!-- Options Buttons Grid -->
+            <div id="trivia-options" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <!-- Dynamic Option Buttons injected by JS -->
+            </div>
+
+            <!-- Explanation / Result Box (Hidden by default) -->
+            <div id="trivia-feedback" class="hidden p-4 rounded-xl text-sm font-medium transition-all">
+              <!-- Injected by JS -->
+            </div>
+
+            <!-- Next Question / Restart Controls -->
+            <div class="flex justify-end pt-2">
+              <button id="trivia-next-btn" class="hidden px-5 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-medium text-sm transition shadow-lg shadow-purple-500/20 items-center space-x-2">
+                <span>Next Question</span>
+                <i data-lucide="arrow-right" class="w-4 h-4"></i>
+              </button>
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+
+      <!-- "Notify Me When Back" & FAQ Section Grid -->
+      <section class="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-12">
+        
+        <!-- Left Column: Email Notification Form -->
+        <div class="lg:col-span-5 space-y-6">
+          <div class="glass-card rounded-2xl p-6 sm:p-8 flex flex-col justify-between h-full">
+            <div>
+              <div class="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400 mb-4">
+                <i data-lucide="bell" class="w-6 h-6"></i>
+              </div>
+
+              <h3 class="text-xl font-bold text-white mb-2">Get Notified Instantly</h3>
+              <p class="text-xs sm:text-sm text-slate-400 mb-6 leading-relaxed">
+                Want to be the first back on Quizzle? Drop your email below and we'll ping you the second all systems are 100% operational. No spam, ever.
+              </p>
+
+              <!-- Email Form -->
+              <form id="notify-form" class="space-y-3">
+                <div class="relative">
+                  <i data-lucide="mail" class="w-5 h-5 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500"></i>
+                  <input 
+                    type="email" 
+                    id="notify-email"
+                    required 
+                    placeholder="Enter your student or study email" 
+                    class="w-full pl-11 pr-4 py-3 rounded-xl bg-slate-900/90 border border-slate-700/80 text-white text-sm focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition placeholder:text-slate-500"
+                  />
+                </div>
+                <button 
+                  type="submit" 
+                  class="w-full py-3 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-cyan-500 hover:opacity-90 text-white font-semibold text-sm transition shadow-lg shadow-purple-500/25 flex items-center justify-center space-x-2"
+                >
+                  <i data-lucide="send" class="w-4 h-4"></i>
+                  <span>Notify Me On Launch</span>
+                </button>
+              </form>
+            </div>
+
+            <div class="mt-6 pt-4 border-t border-slate-800/80 text-[11px] text-slate-500 text-center">
+              🔒 Your data remains encrypted and safe with Quizzle Security.
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: FAQ Accordion Section -->
+        <div class="lg:col-span-7">
+          <div class="glass-card rounded-2xl p-6 sm:p-8">
+            <h3 class="text-xl font-bold text-white mb-6 flex items-center space-x-2">
+              <i data-lucide="help-circle" class="w-5 h-5 text-purple-400"></i>
+              <span>Frequently Asked Questions</span>
+            </h3>
+
+            <div class="space-y-3">
+              
+              <!-- Accordion Item 1 -->
+              <div class="border border-slate-800 rounded-xl overflow-hidden bg-slate-900/40">
+                <button class="faq-btn w-full px-5 py-4 text-left flex items-center justify-between font-semibold text-sm text-slate-200 hover:text-white transition">
+                  <span>Will my saved flashcard decks and study progress be safe?</span>
+                  <i data-lucide="chevron-down" class="faq-icon w-4 h-4 text-slate-400 transition-transform"></i>
+                </button>
+                <div class="faq-content hidden px-5 pb-4 text-xs sm:text-sm text-slate-400 leading-relaxed border-t border-slate-800/50 pt-3">
+                  Absolutely! All user decks, spaced-repetition schedules, and quiz histories are backed up across multiple encrypted database clusters before any maintenance takes place.
+                </div>
+              </div>
+
+              <!-- Accordion Item 2 -->
+              <div class="border border-slate-800 rounded-xl overflow-hidden bg-slate-900/40">
+                <button class="faq-btn w-full px-5 py-4 text-left flex items-center justify-between font-semibold text-sm text-slate-200 hover:text-white transition">
+                  <span>How long will this system update take?</span>
+                  <i data-lucide="chevron-down" class="faq-icon w-4 h-4 text-slate-400 transition-transform"></i>
+                </button>
+                <div class="faq-content hidden px-5 pb-4 text-xs sm:text-sm text-slate-400 leading-relaxed border-t border-slate-800/50 pt-3">
+                  Routine maintenance typically lasts between 15 to 30 minutes. You can monitor the real-time countdown timer above for live progress estimates!
+                </div>
+              </div>
+
+              <!-- Accordion Item 3 -->
+              <div class="border border-slate-800 rounded-xl overflow-hidden bg-slate-900/40">
+                <button class="faq-btn w-full px-5 py-4 text-left flex items-center justify-between font-semibold text-sm text-slate-200 hover:text-white transition">
+                  <span>Where can I track real-time operational status?</span>
+                  <i data-lucide="chevron-down" class="faq-icon w-4 h-4 text-slate-400 transition-transform"></i>
+                </button>
+                <div class="faq-content hidden px-5 pb-4 text-xs sm:text-sm text-slate-400 leading-relaxed border-t border-slate-800/50 pt-3">
+                  We post live incident updates directly to our official status page and X (Twitter) account <a href="#" class="text-cyan-400 underline">@QuizzleStatus</a>.
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Helpful Links Buttons -->
+            <div class="mt-6 pt-6 border-t border-slate-800 flex flex-wrap items-center justify-between gap-3">
+              <div class="flex items-center space-x-3">
+                <a href="#" class="px-3.5 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700/80 text-xs text-slate-300 flex items-center space-x-2 transition">
+                  <i data-lucide="twitter" class="w-3.5 h-3.5 text-cyan-400"></i>
+                  <span>@QuizzleStatus</span>
+                </a>
+                <a href="#" class="px-3.5 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700/80 text-xs text-slate-300 flex items-center space-x-2 transition">
+                  <i data-lucide="life-buoy" class="w-3.5 h-3.5 text-purple-400"></i>
+                  <span>Support Center</span>
+                </a>
+              </div>
+              <button onclick="window.location.reload()" class="text-xs text-cyan-400 hover:text-cyan-300 font-mono flex items-center space-x-1">
+                <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+                <span>Refresh Status</span>
+              </button>
+            </div>
+
+          </div>
+        </div>
+
+      </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-800/80 py-6 text-center text-xs text-slate-500">
+      <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div>
+          &copy; 2026 Quizzle AI Inc. All study systems reserved.
+        </div>
+        <div class="flex items-center space-x-6">
+          <a href="#" class="hover:text-slate-300 transition">Privacy Policy</a>
+          <a href="#" class="hover:text-slate-300 transition">Terms of Service</a>
+          <a href="#" class="hover:text-slate-300 transition">System Architecture</a>
+        </div>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- Notification Toast Container -->
+  <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
+    <div class="glass-card px-5 py-4 rounded-xl border border-emerald-500/40 shadow-2xl flex items-center space-x-3 bg-slate-950/95">
+      <div class="w-8 h-8 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
+        <i data-lucide="check-circle" class="w-5 h-5"></i>
+      </div>
+      <div>
+        <div class="text-sm font-semibold text-white">You're on the alert list!</div>
+        <div class="text-xs text-slate-400">We'll email you the second Quizzle is live.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript Application Logic -->
+  <script>
+    // 1. Initialize Lucide Icons
+    lucide.createIcons();
+
+    // 2. Interactive Background Particle Canvas System
+    (function initCanvas() {
+      const canvas = document.getElementById('bg-canvas');
+      const ctx = canvas.getContext('2d');
+      let width, height;
+      let particles = [];
+
+      function resize() {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+      }
+      window.addEventListener('resize', resize);
+      resize();
+
+      class Particle {
+        constructor() {
+          this.reset();
+        }
+        reset() {
+          this.x = Math.random() * width;
+          this.y = Math.random() * height;
+          this.vx = (Math.random() - 0.5) * 0.4;
+          this.vy = (Math.random() - 0.5) * 0.4;
+          this.radius = Math.random() * 1.8 + 0.5;
+          this.alpha = Math.random() * 0.5 + 0.2;
+          this.color = Math.random() > 0.5 ? '#A855F7' : '#06B6D4';
+        }
+        update() {
+          this.x += this.vx;
+          this.y += this.vy;
+          if (this.x < 0 || this.x > width) this.vx *= -1;
+          if (this.y < 0 || this.y > height) this.vy *= -1;
+        }
+        draw() {
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+          ctx.fillStyle = this.color;
+          ctx.globalAlpha = this.alpha;
+          ctx.fill();
+        }
+      }
+
+      for (let i = 0; i < 50; i++) {
+        particles.push(new Particle());
+      }
+
+      function animate() {
+        ctx.clearRect(0, 0, width, height);
+
+        // Connect nearby particles with neural lines
+        for (let i = 0; i < particles.length; i++) {
+          for (let j = i + 1; j < particles.length; j++) {
+            const dx = particles[i].x - particles[j].x;
+            const dy = particles[i].y - particles[j].y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+
+            if (dist < 120) {
+              ctx.beginPath();
+              ctx.moveTo(particles[i].
